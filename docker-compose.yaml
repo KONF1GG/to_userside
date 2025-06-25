@@ -1,0 +1,11 @@
+
+
+services:
+  consumer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: vector_consumer
+    restart: always
+    env_file:
+      - path: ./.env 
