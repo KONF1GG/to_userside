@@ -213,10 +213,24 @@ class RabbitConsumer:
                 json=data,
                 headers=headers,
             )
-            if response.status_code != 200:
+            
+            if response.status_code == 200:
+                return
+                
+            elif response.status_code == 404:
+                create_if_not = message.get("createIfNot", False)
+                if create_if_not:
+                    logging.warning("Resource not found and createIfNot is True. Will retry.")
+                    raise TransientError(f"Resource not found, but createIfNot is True: {response.text}")
+                else:
+                    logging.info("Resource not found and createIfNot is False. Acknowledging message.")
+                    return
+                    
+            else:
                 raise TransientError(
                     f"Ошибка отправки данных: {response.status_code} - {response.text}"
                 )
+                
         except requests.exceptions.RequestException as e:
             raise TransientError(f"Request exception: {e}") from e
 
