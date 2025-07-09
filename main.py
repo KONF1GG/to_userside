@@ -181,6 +181,9 @@ class RabbitConsumer:
                     else:
                         self._republish_with_retry(channel, body, headers, attempt_count)
                         channel.basic_ack(method.delivery_tag)
+            elif key == "scheme:vector":
+                logging.info("Scheme:vector message skipped.")
+                channel.basic_ack(method.delivery_tag)
             else:
                 raise CriticalError("Неправильный ключ")
         except CriticalError as e:
@@ -194,9 +197,6 @@ class RabbitConsumer:
 
 
     def _handle_login(self, message):
-        if message.get('key') == 'scheme:vector':
-            logging.info("Not login key. Acknowledging message.")
-            return
         login = message.get("key")[6:]
         value = message.get("value")
         house_id = value.get("houseId")
