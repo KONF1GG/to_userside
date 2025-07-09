@@ -194,6 +194,9 @@ class RabbitConsumer:
 
 
     def _handle_login(self, message):
+        if message.get('key') == 'scheme:vector':
+            logging.info("Not login key. Acknowledging message.")
+            return
         login = message.get("key")[6:]
         value = message.get("value")
         house_id = value.get("houseId")
