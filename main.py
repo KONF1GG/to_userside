@@ -196,13 +196,13 @@ class RabbitConsumer:
     def _handle_login(self, message):
         login = message.get("key")[6:]
         value = message.get("value")
-        house_id = str(value.get("houseId"))
+        house_id = value.get("houseId")
         address = value.get("address")
 
         data = {
             "login": login,
             "address": address,
-            "houseId": int(house_id),
+            "houseId": house_id,
         }
 
         headers = {"Content-Type": "application/json"}
